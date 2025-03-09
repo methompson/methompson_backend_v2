@@ -9,14 +9,14 @@ import { InvalidInputError } from '@/utils/errors';
 
 export interface PurchasePriceJSON {
   id: string;
-  vbUserId: string;
+  userId: string;
   name: string;
   price: number;
 }
 
 const isPurchasePriceJSONCommon = {
   id: isString,
-  vbUserId: isString,
+  userId: isString,
   name: isString,
   price: isNumber,
 };
@@ -29,18 +29,23 @@ const isPurchasePriceJSONTest = typeGuardTestGenerator(
 );
 
 export class PurchasePrice {
-  constructor(
-    protected _id: string,
-    protected _vbUserId: string,
-    protected _name: string,
-    protected _price: number,
-  ) {}
+  protected _id: string;
+  protected _userId: string;
+  protected _name: string;
+  protected _price: number;
+
+  constructor(input: PurchasePriceJSON) {
+    this._id = input.id;
+    this._userId = input.userId;
+    this._name = input.name;
+    this._price = input.price;
+  }
 
   get id(): string {
     return this._id;
   }
-  get vbUserId(): string {
-    return this._vbUserId;
+  get userId(): string {
+    return this._userId;
   }
   get name(): string {
     return this._name;
@@ -52,7 +57,7 @@ export class PurchasePrice {
   toJSON(): PurchasePriceJSON {
     return {
       id: this.id,
-      vbUserId: this.vbUserId,
+      userId: this.userId,
       name: this.name,
       price: this.price,
     };
@@ -64,18 +69,17 @@ export class PurchasePrice {
       throw new InvalidInputError(`Invalid JSON ${errors.join(', ')}`);
     }
 
-    return new PurchasePrice(input.id, input.vbUserId, input.name, input.price);
+    return new PurchasePrice(input);
   }
 
   static isPurchasePriceJSON = isPurchasePriceJSON;
-
   static PurchasePriceJSONTest = isPurchasePriceJSONTest;
 
   static fromNewPurchasePrice(
     id: string,
     purchasePrice: PurchasePrice,
   ): PurchasePrice {
-    return PurchasePrice.fromJSON({
+    return new PurchasePrice({
       ...purchasePrice.toJSON(),
       id,
     });

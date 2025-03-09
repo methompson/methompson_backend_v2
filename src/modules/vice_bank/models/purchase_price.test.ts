@@ -3,7 +3,7 @@ import { PurchasePrice, PurchasePriceJSON } from './purchase_price';
 describe('PurchasePrice', () => {
   const validInput: PurchasePriceJSON = {
     id: 'id',
-    vbUserId: 'vbUserId',
+    userId: 'userId',
     name: 'name',
     price: 1,
   };
@@ -23,7 +23,7 @@ describe('PurchasePrice', () => {
       const result = PurchasePrice.fromJSON(validInput);
       expect(result instanceof PurchasePrice).toBe(true);
       expect(result.id).toBe('id');
-      expect(result.vbUserId).toBe('vbUserId');
+      expect(result.userId).toBe('userId');
       expect(result.name).toBe('name');
       expect(result.price).toBe(1);
     });
@@ -36,7 +36,7 @@ describe('PurchasePrice', () => {
       expect(() => PurchasePrice.fromJSON(invalidInput)).toThrow();
 
       invalidInput = { ...validInput };
-      delete invalidInput.vbUserId;
+      delete invalidInput.userId;
       expect(() => PurchasePrice.fromJSON(invalidInput)).toThrow();
 
       invalidInput = { ...validInput };
@@ -70,7 +70,7 @@ describe('PurchasePrice', () => {
       expect(PurchasePrice.isPurchasePriceJSON(invalidInput)).toBe(false);
 
       invalidInput = { ...validInput };
-      delete invalidInput.vbUserId;
+      delete invalidInput.userId;
       expect(PurchasePrice.isPurchasePriceJSON(invalidInput)).toBe(false);
 
       invalidInput = { ...validInput };
@@ -104,9 +104,9 @@ describe('PurchasePrice', () => {
       expect(PurchasePrice.PurchasePriceJSONTest(invalidInput)).toEqual(['id']);
 
       invalidInput = { ...validInput };
-      delete invalidInput.vbUserId;
+      delete invalidInput.userId;
       expect(PurchasePrice.PurchasePriceJSONTest(invalidInput)).toEqual([
-        'vbUserId',
+        'userId',
       ]);
 
       invalidInput = { ...validInput };
@@ -141,7 +141,7 @@ describe('PurchasePrice', () => {
 
       expect(result instanceof PurchasePrice).toBe(true);
       expect(result.id).toBe(newId);
-      expect(result.vbUserId).toBe(input.vbUserId);
+      expect(result.userId).toBe(input.userId);
       expect(result.name).toBe(input.name);
       expect(result.price).toBe(input.price);
     });
