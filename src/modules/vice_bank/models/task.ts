@@ -10,59 +10,61 @@ import { Frequency, frequencyFromString, isFrequency } from '@/utils/types';
 
 export interface TaskJSON {
   id: string;
-  vbUserId: string;
+  userId: string;
   name: string;
   frequency: string;
-  tokensPer: number;
+  tokensEarnedPerInput: number;
 }
 
 const isTaskJSONCommon = {
   id: isString,
-  vbUserId: isString,
+  userId: isString,
   name: isString,
   frequency: isFrequency,
-  tokensPer: isNumber,
+  tokensEarnedPerInput: isNumber,
 };
 
 const isTaskJSON = typeGuardGenerator<TaskJSON>(isTaskJSONCommon);
 const isTaskJSONTest = typeGuardTestGenerator(isTaskJSONCommon);
 
 export class Task {
-  constructor(
-    protected _id: string,
-    protected _vbUserId: string,
-    protected _name: string,
-    protected _frequency: Frequency,
-    protected _tokensPer: number,
-  ) {}
+  protected _id: string;
+  protected _userId: string;
+  protected _name: string;
+  protected _frequency: Frequency;
+  protected _tokensEarnedPerInput: number;
+
+  constructor(payload: TaskJSON) {
+    this._id = payload.id;
+    this._userId = payload.userId;
+    this._name = payload.name;
+    this._frequency = frequencyFromString(payload.frequency);
+    this._tokensEarnedPerInput = payload.tokensEarnedPerInput;
+  }
 
   get id(): string {
     return this._id;
   }
-
-  get vbUserId(): string {
-    return this._vbUserId;
+  get userId(): string {
+    return this._userId;
   }
-
   get name(): string {
     return this._name;
   }
-
   get frequency(): Frequency {
     return this._frequency;
   }
-
-  get tokensPer(): number {
-    return this._tokensPer;
+  get tokensEarnedPerInput(): number {
+    return this._tokensEarnedPerInput;
   }
 
   toJSON(): TaskJSON {
     return {
       id: this.id,
-      vbUserId: this.vbUserId,
+      userId: this.userId,
       name: this.name,
       frequency: this.frequency,
-      tokensPer: this.tokensPer,
+      tokensEarnedPerInput: this.tokensEarnedPerInput,
     };
   }
 
@@ -72,13 +74,7 @@ export class Task {
       throw new InvalidInputError(`Invalid JSON ${errors.join(', ')}`);
     }
 
-    return new Task(
-      input.id,
-      input.vbUserId,
-      input.name,
-      frequencyFromString(input.frequency),
-      input.tokensPer,
-    );
+    return new Task(input);
   }
 
   static isTaskJSON = isTaskJSON;
@@ -86,6 +82,6 @@ export class Task {
   static TaskJSONTest = isTaskJSONTest;
 
   static fromNewTask(id: string, input: Task): Task {
-    return Task.fromJSON({ ...input.toJSON(), id });
+    return new Task({ ...input.toJSON(), id });
   }
 }
