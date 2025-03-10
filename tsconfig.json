@@ -16,11 +16,14 @@
       "@/*": [
         "./src/*"
       ],
+      "@vice_bank/*": [
+        "./packages/vice_bank_submodule/src/*"
+      ]
     },
   },
   "include": [
     "./src/**/*",
-    "./packages/img_gen_submodule/src/**/*",
+    "./packages/vice_bank_submodule/src/**/*",
   ],
   "exclude": [
     "node_modules",

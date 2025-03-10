@@ -5,7 +5,12 @@ export default [
   ...tseslint.config(tseslint.configs.recommended),
   eslintPluginPrettierRecommended,
   {
-    ignores: ['dist/*', '.eslintrc.js', 'jest.config.*'],
+    ignores: [
+      'dist/*',
+      '.eslintrc.js',
+      'jest.config.*',
+      'packages/vice_bank_submodule/*',
+    ],
   },
   {
     languageOptions: {
