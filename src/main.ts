@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { isString } from 'tcheck';
-import { ExpressApp } from './utils/express_module';
+import { makeViceBankApp } from './modules/vice_bank';
 
 function getPort(): number {
   if (isString(process.env.PORT)) {
@@ -16,11 +16,13 @@ function getPort(): number {
 }
 
 async function startUp() {
-  const app = new ExpressApp(express());
+  const app = express();
 
   app.use(express.json());
   app.use(cors());
   app.use(cookieParser());
+
+  app.use(makeViceBankApp());
 
   const port = getPort();
   app.listen(port, () => {
