@@ -1,4 +1,3 @@
-import { join } from 'path';
 import { isArray } from 'tcheck';
 
 import { Action } from '@vice_bank/models/action';
@@ -12,14 +11,18 @@ import { NotFoundError } from '@/utils/errors';
 // This class will be used to interact with a file to
 // store and retrieve actions
 class ActionDataService extends FileDataService {
-  private actions: Record<string, Action> = {};
+  protected _actions: Record<string, Action> = {};
 
   get actionString() {
-    return JSON.stringify(Object.values(this.actions));
+    return JSON.stringify(Object.values(this._actions));
+  }
+
+  get actions() {
+    return { ...this._actions };
   }
 
   async getActionById(id: string): Promise<Action> {
-    const action = this.actions[id];
+    const action = this._actions[id];
 
     if (!action) {
       throw new NotFoundError('Action not found');
@@ -29,47 +32,53 @@ class ActionDataService extends FileDataService {
   }
 
   async getActionsByUser(userId: string): Promise<Action[]> {
-    const actions = Object.values(this.actions).filter(
+    const actions = Object.values(this._actions).filter(
       (action) => action.userId === userId,
     );
 
     return actions;
   }
 
-  async addAction(action: Action) {
-    this.actions[action.id] = action;
+  async addAction(action: Action): Promise<Action> {
+    const oldAction = this._actions[action.id];
 
-    await this.writeDataToFile({
-      path: this.filePath,
-      filename: `${this.baseFilename}.json`,
-      content: this.actionString,
-    });
+    if (oldAction) {
+      throw new Error('Action already exists');
+    }
+
+    this._actions[action.id] = action;
+
+    await this.writeActionsToFile();
+
+    return action;
   }
 
-  async updateAction(action: Action) {
-    const oldAction = this.actions[action.id];
+  async updateAction(action: Action): Promise<Action> {
+    const oldAction = this._actions[action.id];
 
     if (!oldAction) {
       throw new NotFoundError('Action not found');
     }
 
-    this.actions[action.id] = action;
+    this._actions[action.id] = action;
 
     await this.writeActionsToFile();
 
     return oldAction;
   }
 
-  async deleteAction(actionId: string) {
-    const oldAction = this.actions[actionId];
+  async deleteAction(actionId: string): Promise<Action> {
+    const oldAction = this._actions[actionId];
 
     if (!oldAction) {
       throw new NotFoundError('Action not found');
     }
 
-    delete this.actions[actionId];
+    delete this._actions[actionId];
 
     await this.writeActionsToFile();
+
+    return oldAction;
   }
 
   async writeActionsToFile() {
@@ -81,8 +90,7 @@ class ActionDataService extends FileDataService {
   }
 
   async init() {
-    const filePath = join(this.filePath, `${this.baseFilename}.json`);
-    const dataStr = await this.readFile(filePath);
+    const dataStr = await this.readFile(this.filePath);
 
     try {
       const rawData = JSON.parse(dataStr);
@@ -91,29 +99,42 @@ class ActionDataService extends FileDataService {
         throw new Error('Data is not an array');
       }
 
-      const actions = [];
+      const actions: Action[] = [];
       for (const dat of rawData) {
         const action = Action.fromJSON(dat);
         actions.push(action);
       }
 
-      this.actions = arrayToObject(actions, (a) => a.id);
+      this._actions = arrayToObject(actions, (a) => a.id);
     } catch (e) {
       console.error('Error parsing data', e);
-      await this.clearFile(filePath);
+
+      await this.clearFile();
     }
   }
 
-  static async initActionDataService() {
-    const svc = new ActionDataService(getBaseFilePath(), 'actions');
-    await svc.init();
+  async clearFile() {
+    return super.clearFile(this.filePath);
   }
 }
 
 const actionService = new ActionDataService(getBaseFilePath(), 'actions');
+export async function initActions() {
+  await actionService.init();
+}
 
 export async function getActions(userId: string) {
   return actionService.getActionsByUser(userId);
+}
+
+export async function getAction(actionId: string, userId: string) {
+  const action = await actionService.getActionById(actionId);
+
+  if (action.userId !== userId) {
+    throw new NotFoundError('Action not found');
+  }
+
+  return action;
 }
 
 export async function addAction(action: Action) {
@@ -126,4 +147,8 @@ export async function updateAction(action: Action) {
 
 export async function deleteAction(actionId: string) {
   return actionService.deleteAction(actionId);
+}
+
+export async function clearActions() {
+  await actionService.clearFile();
 }

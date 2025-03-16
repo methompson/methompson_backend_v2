@@ -22,7 +22,7 @@ async function startUp() {
   app.use(cors());
   app.use(cookieParser());
 
-  app.use(makeViceBankApp());
+  app.use(await makeViceBankApp());
 
   const port = getPort();
   app.listen(port, () => {
