@@ -16,7 +16,7 @@
     "express": "^4.21.2",
     "firebase-admin": "^13.2.0",
     "luxon": "^3.5.0",
-    "tcheck": "^1.2.1",
+    "tcheck": "^1.2.5",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
