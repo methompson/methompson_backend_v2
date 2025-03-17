@@ -1,8 +1,5 @@
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-
-import { addAction } from '@/modules/vice_bank/data_controller/actions/actions';
-import { Action } from '@vice_bank/models/action';
 import {
   isNumber,
   isString,
@@ -10,6 +7,9 @@ import {
   typeGuardGenerator,
   unionGuard,
 } from 'tcheck';
+
+import { addAction } from '@/modules/vice_bank/data_controller/actions/actions';
+import { Action } from '@vice_bank/models/action';
 
 interface AddActionRequest {
   userId: string;
