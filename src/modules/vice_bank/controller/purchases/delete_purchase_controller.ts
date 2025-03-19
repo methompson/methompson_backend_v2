@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
 import { isString } from 'tcheck';
 
-import { deleteTaskDeposit } from '@/modules/vice_bank/data_controller/actions/task_deposits';
-
 export async function deleteTaskDepositController(req: Request, res: Response) {
   const { taskDepositId } = req.body;
 
