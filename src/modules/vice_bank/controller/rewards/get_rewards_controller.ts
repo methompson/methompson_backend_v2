@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
 import { isString } from 'tcheck';
 
-import { getTaskDeposits } from '@/modules/vice_bank/data_controller/actions/task_deposits';
-
 export async function getTaskDepositController(req: Request, res: Response) {
   const { userId } = req.body;
 
