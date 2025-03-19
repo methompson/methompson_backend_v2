@@ -1,23 +1,26 @@
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { isString, typeGuardGenerator } from 'tcheck';
+import { isNumber, isString, typeGuardGenerator } from 'tcheck';
 
-interface AddTaskDepositRequest {
+import { Reward } from '@vice_bank/models/reward';
+import { addReward } from '@/modules/vice_bank/data_controller/purchases/rewards';
+
+interface AddRewardRequest {
   userId: string;
-  date: string;
-  task: TaskJSON;
+  name: string;
+  price: number;
 }
 
-const isAddTaskDepositRequest = typeGuardGenerator<AddTaskDepositRequest>({
+const isAddRewardRequest = typeGuardGenerator<AddRewardRequest>({
   userId: isString,
-  date: isValidDateTimeString,
-  task: Task.isTaskJSON,
+  name: isString,
+  price: isNumber,
 });
 
-export async function addTaskDepositController(req: Request, res: Response) {
-  const { taskDeposit } = req.body;
+export async function addRewardController(req: Request, res: Response) {
+  const { reward } = req.body;
 
-  if (!isAddTaskDepositRequest(taskDeposit)) {
+  if (!isAddRewardRequest(reward)) {
     res.status(400).json({
       error: 'Invalid request body',
     });
@@ -25,16 +28,16 @@ export async function addTaskDepositController(req: Request, res: Response) {
   }
 
   try {
-    const deposit = new TaskDeposit({
+    const newReward = new Reward({
       id: uuidv4(),
-      userId: taskDeposit.userId,
-      date: taskDeposit.date,
-      task: taskDeposit.task,
+      userId: reward.userId,
+      name: reward.name,
+      price: reward.price,
     });
 
-    await addTaskDeposit(deposit);
+    await addReward(newReward);
 
-    res.json({ taskDeposit: deposit });
+    res.json({ reward: newReward });
   } catch (e) {
     console.error(e);
     res.status(500).json({
