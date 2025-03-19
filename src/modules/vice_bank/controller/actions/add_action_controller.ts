@@ -32,9 +32,9 @@ const isAddActionRequest = typeGuardGenerator<AddActionRequest>({
 });
 
 export async function addActionController(req: Request, res: Response) {
-  const body = req.body;
+  const { action } = req.body;
 
-  if (!isAddActionRequest(body)) {
+  if (!isAddActionRequest(action)) {
     res.status(400).json({
       error: 'Invalid request body',
     });
@@ -42,20 +42,20 @@ export async function addActionController(req: Request, res: Response) {
   }
 
   try {
-    const action = new Action({
+    const actionToAdd = new Action({
       id: uuidv4(),
-      userId: body.userId,
-      name: body.name,
-      conversionUnit: body.conversionUnit,
-      inputQuantity: body.inputQuantity,
-      tokensEarnedPerInput: body.tokensEarnedPerInput,
-      minDeposit: body.minDeposit,
-      maxDeposit: body.maxDeposit,
+      userId: action.userId,
+      name: action.name,
+      conversionUnit: action.conversionUnit,
+      inputQuantity: action.inputQuantity,
+      tokensEarnedPerInput: action.tokensEarnedPerInput,
+      minDeposit: action.minDeposit,
+      maxDeposit: action.maxDeposit,
     });
 
-    await addAction(action);
+    await addAction(actionToAdd);
 
-    res.json({ action });
+    res.json({ action: actionToAdd });
   } catch (e) {
     console.error(e);
     res.status(500).json({

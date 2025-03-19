@@ -17,6 +17,25 @@ class ViceBankUsersDataService extends FileDataService<ViceBankUser> {
 
     return viceBankUsers;
   }
+
+  // We're checking that the Vicebank User ID and User ID both match
+  async deleteViceBankUserById(userId: string, viceBankUserId: string) {
+    const oldDat = this._data[viceBankUserId];
+
+    if (!oldDat) {
+      throw new NotFoundError('Data not found');
+    }
+
+    if (oldDat.userId !== userId) {
+      throw new NotFoundError('Data not found');
+    }
+
+    delete this._data[viceBankUserId];
+
+    await this.writeCurrentDataToFile();
+
+    return oldDat;
+  }
 }
 
 const viceBankUsersService = new ViceBankUsersDataService(
@@ -49,9 +68,13 @@ export async function updateViceBankUser(viceBankUser: ViceBankUser) {
   return viceBankUsersService.updateData({ data: viceBankUser });
 }
 
-export async function deleteViceBankUser(viceBankUserId: string) {
-  return viceBankUsersService.deleteData({ id: viceBankUserId });
+export async function deleteViceBankUser(
+  userId: string,
+  viceBankUserId: string,
+) {
+  return viceBankUsersService.deleteViceBankUserById(userId, viceBankUserId);
 }
+
 export async function clearViceBankUsers() {
   await viceBankUsersService.clearFile();
 }
