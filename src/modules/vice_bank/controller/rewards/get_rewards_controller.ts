@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import { isString } from 'tcheck';
 
-export async function getTaskDepositController(req: Request, res: Response) {
+import { getRewards } from '@/modules/vice_bank/data_controller/purchases/rewards';
+
+export async function getRewardsController(req: Request, res: Response) {
   const { userId } = req.body;
 
   if (!isString(userId)) {
@@ -12,9 +14,9 @@ export async function getTaskDepositController(req: Request, res: Response) {
   }
 
   try {
-    const taskDeposits = await getTaskDeposits(userId);
+    const rewards = await getRewards(userId);
 
-    res.json({ taskDeposits });
+    res.json({ rewards });
   } catch (e) {
     console.error(e);
     res.status(500).json({

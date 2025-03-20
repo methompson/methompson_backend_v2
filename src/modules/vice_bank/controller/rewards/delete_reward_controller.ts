@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
 import { isString } from 'tcheck';
 
-export async function deleteTaskDepositController(req: Request, res: Response) {
-  const { taskDepositId } = req.body;
+import { deleteReward } from '@/modules/vice_bank/data_controller/purchases/rewards';
 
-  if (!isString(taskDepositId)) {
+export async function deleteRewardController(req: Request, res: Response) {
+  const { rewardId } = req.body;
+
+  if (!isString(rewardId)) {
     res.status(400).json({
       error: 'Invalid request body',
     });
@@ -12,9 +14,9 @@ export async function deleteTaskDepositController(req: Request, res: Response) {
   }
 
   try {
-    const taskDeposit = await deleteTaskDeposit(taskDepositId);
+    const reward = await deleteReward(rewardId);
 
-    res.json({ taskDeposit });
+    res.json({ reward });
   } catch (e) {
     console.error(e);
     res.status(500).json({

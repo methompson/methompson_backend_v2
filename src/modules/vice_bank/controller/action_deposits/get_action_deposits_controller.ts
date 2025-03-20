@@ -3,7 +3,7 @@ import { isString } from 'tcheck';
 
 import { getActionDeposits } from '@/modules/vice_bank/data_controller/actions/action_deposits';
 
-export async function getActionDepositController(req: Request, res: Response) {
+export async function getActionDepositsController(req: Request, res: Response) {
   const { userId } = req.body;
 
   if (!isString(userId)) {

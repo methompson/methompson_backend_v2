@@ -1,23 +1,30 @@
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { isString, typeGuardGenerator } from 'tcheck';
+import { isNumber, isString, typeGuardGenerator } from 'tcheck';
 
-interface AddTaskDepositRequest {
+import { Reward, RewardJSON } from '@vice_bank/models/reward';
+import { isValidDateTimeString } from '@vice_bank/utils/type_guards';
+import { Purchase } from '@vice_bank/models/purchase';
+import { addPurchase } from '@/modules/vice_bank/data_controller/purchases/purchases';
+
+interface AddPurchaseRequest {
   userId: string;
   date: string;
-  task: TaskJSON;
+  purchasedQuantity: number;
+  reward: RewardJSON;
 }
 
-const isAddTaskDepositRequest = typeGuardGenerator<AddTaskDepositRequest>({
+const isAddPurchaseRequest = typeGuardGenerator<AddPurchaseRequest>({
   userId: isString,
   date: isValidDateTimeString,
-  task: Task.isTaskJSON,
+  purchasedQuantity: isNumber,
+  reward: Reward.isRewardJSON,
 });
 
-export async function addTaskDepositController(req: Request, res: Response) {
-  const { taskDeposit } = req.body;
+export async function addPurchaseController(req: Request, res: Response) {
+  const { purchase } = req.body;
 
-  if (!isAddTaskDepositRequest(taskDeposit)) {
+  if (!isAddPurchaseRequest(purchase)) {
     res.status(400).json({
       error: 'Invalid request body',
     });
@@ -25,16 +32,17 @@ export async function addTaskDepositController(req: Request, res: Response) {
   }
 
   try {
-    const deposit = new TaskDeposit({
+    const newPurchase = new Purchase({
       id: uuidv4(),
-      userId: taskDeposit.userId,
-      date: taskDeposit.date,
-      task: taskDeposit.task,
+      userId: purchase.userId,
+      date: purchase.date,
+      purchasedQuantity: purchase.purchasedQuantity,
+      reward: purchase.reward,
     });
 
-    await addTaskDeposit(deposit);
+    await addPurchase(newPurchase);
 
-    res.json({ taskDeposit: deposit });
+    res.json({ purchase: newPurchase });
   } catch (e) {
     console.error(e);
     res.status(500).json({

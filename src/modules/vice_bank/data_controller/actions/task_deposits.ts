@@ -22,7 +22,7 @@ const taskDepositService = new TaskDepositService(
   getBaseFilePath(),
   'task_deposit',
 );
-export async function initActions() {
+export async function initTaskDeposits() {
   await taskDepositService.init();
 }
 

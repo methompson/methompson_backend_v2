@@ -42,7 +42,7 @@ const viceBankUsersService = new ViceBankUsersDataService(
   getBaseFilePath(),
   'viceBankUsers',
 );
-export async function init() {
+export async function initUsers() {
   await viceBankUsersService.init();
 }
 

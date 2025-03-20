@@ -1,12 +1,15 @@
 import { Request, Response } from 'express';
 
-export async function updateTaskDepositController(req: Request, res: Response) {
+import { Purchase } from '@vice_bank/models/purchase';
+import { updatePurchase } from '@/modules/vice_bank/data_controller/purchases/purchases';
+
+export async function updatePurchaseController(req: Request, res: Response) {
   const body = req.body;
 
-  let update: TaskDeposit;
+  let update: Purchase;
 
   try {
-    update = TaskDeposit.fromJSON(body.taskDeposit);
+    update = Purchase.fromJSON(body.purchase);
   } catch (_e) {
     res.status(400).json({
       error: 'Invalid request body',
@@ -15,9 +18,9 @@ export async function updateTaskDepositController(req: Request, res: Response) {
   }
 
   try {
-    const result = await updateTaskDeposit(update);
+    const result = await updatePurchase(update);
 
-    res.json({ taskDeposit: result });
+    res.json({ purchase: result });
   } catch (e) {
     console.error(e);
     res.status(500).json({

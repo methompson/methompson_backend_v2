@@ -23,7 +23,7 @@ const purchasesService = new PurchasesDataService(
   getBaseFilePath(),
   'purchases',
 );
-export async function init() {
+export async function initPurchases() {
   await purchasesService.init();
 }
 

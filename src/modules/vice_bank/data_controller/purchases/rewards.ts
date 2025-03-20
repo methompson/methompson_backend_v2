@@ -20,7 +20,7 @@ class RewardsDataService extends FileDataService<Reward> {
 }
 
 const rewardsService = new RewardsDataService(getBaseFilePath(), 'rewards');
-export async function init() {
+export async function initRewards() {
   await rewardsService.init();
 }
 

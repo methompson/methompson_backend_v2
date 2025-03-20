@@ -20,7 +20,7 @@ class TaskDataService extends FileDataService<Task> {
 }
 
 const actionService = new TaskDataService(getBaseFilePath(), 'actions');
-export async function initActions() {
+export async function initTasks() {
   await actionService.init();
 }
 
