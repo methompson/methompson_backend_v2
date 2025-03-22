@@ -55,7 +55,7 @@ export async function addActionController(req: Request, res: Response) {
 
     await addAction(actionToAdd);
 
-    res.json({ action: actionToAdd });
+    res.json({ action: actionToAdd.toJSON() });
   } catch (e) {
     console.error(e);
     res.status(500).json({
